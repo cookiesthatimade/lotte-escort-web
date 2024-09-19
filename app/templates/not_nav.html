@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="kr">
+  <style>
+    .lang-button {
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 30px;
+      color: black;
+    }
+  </style>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+    />
+    <!--<meta http-equiv="refresh" content="10; url=/" /> -->
+    <title>롯데아울렛 광주월드컵점</title>
+    <link rel="icon" href="static/img/favicon.ico" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/swiper@8/swiper-bundle.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="static/css/lotte.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/annyang/2.6.1/annyang.min.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js"></script>
+  </head>
+
+  <body>
+    <nav>
+      <div class="left">
+        <div class="logo">
+          <a href="#"><img src="/static/img/lotte_logo.svg" alt="" /></a>
+        </div>
+      </div>
+      <div class="right">
+        <button id="lang-toggle" class="lang-button">
+          <i class="fas fa-globe"></i>
+        </button>
+      </div>
+    </nav>
+    <main>
+      <div class="m-container">
+        <div class="mic-button">
+          <div class="mic-button-loader"></div>
+          <i class="fas fa-microphone"></i>
+        </div>
+
+        <div class="waveContainer">
+          <div class="wave wave1"></div>
+          <div class="wave wave2"></div>
+          <div class="wave wave3"></div>
+          <div class="wave wave4"></div>
+          <div class="wave wave5"></div>
+          <div class="wave wave6"></div>
+          <div class="wave wave7"></div>
+          <div class="wave wave8"></div>
+          <div class="wave wave9"></div>
+          <div class="wave wave10"></div>
+        </div>
+
+        <div class="answer">음성인식으로 매장 안내를 도와드립니다.</div>
+        <div class="query">
+          예시 : 캉골 매장으로 안내해주세요, 나이키 매장으로 안내해주세요.
+        </div>
+      </div>
+
+      <button class="map-button">
+        <i class="fas fa-map" style="color: black"></i>아울렛 매장 지도
+      </button>
+
+      <div class="img-modal">
+        <div class="modal-content">
+          <span class="close-btn">&times;</span>
+          <img src="static/img/lotte_map.jpg" alt="Modal Image" />
+        </div>
+      </div>
+
+      <div class="opacity-overlay"></div>
+
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <h1 class="title_st">
+              매장 안내 버튼
+              <span>(이미지 클릭 시 해당 매장으로 안내)</span>
+            </h1>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-wrapper">
+        <div class="modal">
+          <div class="head">
+            <a class="btn-close trigger" href="#"
+              ><i class="fa fa-times" aria-hidden="true"></i
+            ></a>
+          </div>
+          <div class="content">
+            <div class="exit-number">
+              <img id="modalImage" src="" alt="Image" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="imgContainer"></div>
+    </main>
+
+    <script src="static/js/lotte.js"></script>
+    <script>
+      const translations = {
+        "음성인식으로 매장 안내를 도와드립니다.":
+          "We will guide you through the store using voice recognition.",
+        "예시 : 캉골 매장으로 안내해주세요, 나이키 매장으로 안내해주세요.":
+          "Example: Guide me to the Kangol store, Guide me to the Nike store.",
+        "매장 안내 버튼": "Store Button",
+        "(이미지 클릭 시 해당 매장으로 안내)":
+          "(Click the image to navigate to the store)",
+        "아울렛 매장 지도": "Outlet Store Map",
+      };
+
+      let isEnglish = false; // 현재 언어 상태를 저장하는 변수
+
+      document
+        .getElementById("lang-toggle")
+        .addEventListener("click", function () {
+          const elementsToTranslate = document.querySelectorAll(
+            ".answer, .query, .map-button"
+          );
+
+          // 언어에 따라 번역할 텍스트를 설정
+          elementsToTranslate.forEach((element) => {
+            const text = element.innerText.trim();
+            if (isEnglish) {
+              // 현재 영어인 경우 한국어로 변환
+              const originalText = Object.keys(translations).find(
+                (key) => translations[key] === text
+              );
+              if (originalText) {
+                element.innerText = originalText;
+              }
+            } else {
+              // 현재 한국어인 경우 영어로 변환
+              if (translations[text]) {
+                element.innerText = translations[text];
+              }
+            }
+          });
+
+          // 매장 안내 버튼과 span 번역 처리
+          const titleElement = document.querySelector(".title_st");
+          const titleText = titleElement.childNodes[0].nodeValue.trim(); // 텍스트 노드만 가져오기
+
+          if (isEnglish) {
+            // 영어 -> 한국어
+            const originalTitle = Object.keys(translations).find(
+              (key) => translations[key] === titleText
+            );
+            if (originalTitle) {
+              titleElement.childNodes[0].nodeValue = originalTitle;
+            }
+          } else {
+            // 한국어 -> 영어
+            if (translations[titleText]) {
+              titleElement.childNodes[0].nodeValue = translations[titleText];
+            }
+          }
+
+          const spanElement = document.querySelector(".title_st span");
+          const spanText = spanElement.innerText.trim();
+
+          if (isEnglish) {
+            // 영어 -> 한국어
+            const originalSpan = Object.keys(translations).find(
+              (key) => translations[key] === spanText
+            );
+            if (originalSpan) {
+              spanElement.innerText = originalSpan;
+            }
+          } else {
+            // 한국어 -> 영어
+            if (translations[spanText]) {
+              spanElement.innerText = translations[spanText];
+            }
+          }
+
+          // imgContainer 내 텍스트 변경 (HTML 구조 유지)
+          const imgContainerTexts =
+            document.querySelectorAll("#imgContainer *");
+
+          imgContainerTexts.forEach((element) => {
+            const text = element.innerText.trim();
+            if (text) {
+              // 텍스트가 있는 경우만 처리
+              if (isEnglish) {
+                // 현재 영어인 경우 한국어로 변환
+                const originalText = Object.keys(translations).find(
+                  (key) => translations[key] === text
+                );
+                if (originalText) {
+                  element.innerText = originalText;
+                }
+              } else {
+                // 현재 한국어인 경우 영어로 변환
+                if (translations[text]) {
+                  element.innerText = translations[text];
+                }
+              }
+            }
+          });
+
+          // 언어 상태를 반전시킴
+          isEnglish = !isEnglish;
+        });
+    </script>
+  </body>
+</html>

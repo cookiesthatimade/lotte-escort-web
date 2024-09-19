@@ -49,9 +49,14 @@ def news2():
     return render_template('news2.html')
 
 
+@app.route('/test', methods=['GET', 'POST'])
+def test():
+    return render_template('not_nav.html')
+
 ############################################################################################
 ###### SSE#####
 ############################################################################################
+
 
 @app.route('/sensing_data')
 def sensing_data():
