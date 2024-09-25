@@ -30,6 +30,11 @@ def get_connection():
 
 
 @app.route('/', methods=['GET', 'POST'])
+def lotte():
+    return render_template('lotte.html')
+
+
+@app.route('/lotte1', methods=['GET', 'POST'])
 def lotte1():
     return render_template('lotte1.html')
 
@@ -39,19 +44,10 @@ def lotte2():
     return render_template('lotte2.html')
 
 
-@app.route('/lotte3', methods=['GET', 'POST'])
-def lotte3():
-    return render_template('lotte3.html')
-
-
 @app.route('/news', methods=['GET', 'POST'])
 def news2():
     return render_template('news2.html')
 
-
-@app.route('/test', methods=['GET', 'POST'])
-def test():
-    return render_template('not_nav.html')
 
 ############################################################################################
 ###### SSE#####
