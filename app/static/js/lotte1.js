@@ -331,6 +331,7 @@ document.addEventListener("DOMContentLoaded", function () {
     showStores(firstFloorMenu["여성패션"]);
     const firstMenuButton = topbar.querySelector("button");
     firstMenuButton.classList.add("active");
+    storeArea.scrollTop = 0;
   });
 
   document.getElementById("2f-btn").addEventListener("click", function () {
@@ -341,6 +342,7 @@ document.addEventListener("DOMContentLoaded", function () {
     showStores(secondFloorMenu["래져/스포츠"]);
     const secondMenuButton = topbar.querySelector("button");
     secondMenuButton.classList.add("active");
+    storeArea.scrollTop = 0;
   });
 
   topbar.appendChild(createMenu(Object.keys(firstFloorMenu), firstFloorMenu));
