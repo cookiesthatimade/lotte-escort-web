@@ -29,7 +29,7 @@ def get_connection():
     return connection
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/lotte', methods=['GET', 'POST'])
 def lotte():
     return render_template('lotte.html')
 

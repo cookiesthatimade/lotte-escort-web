@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>매장 리스트</title>
+    <link rel="stylesheet" href="static/css/lotte.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+      integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+  <body>
+    <nav>
+      <img
+        src="/static/img/lotte_logo.svg"
+        alt="롯데 아울렛 로고"
+        class="logo"
+      />
+    </nav>
+    <main>
+      <div class="left" onclick="goToLotte1()">
+        <div class="content">
+          <i class="fa-solid fa-cart-shopping fa-lg"></i>
+          <h1>매장 찾기</h1>
+          <p>매장 리스트를 통해 위치를 확인하세요!</p>
+          <a class="hoverable">TAP</a>
+        </div>
+      </div>
+
+      <div class="right" onclick="goToLotte2()">
+        <div class="content">
+          <i class="fa-solid fa-microphone fa-lg"></i>
+          <h1>음성인식을 통해 매장 찾기</h1>
+          <p>로봇에게 매장 위치를 물어보세요!</p>
+          <a class="hoverable">TAP</a>
+        </div>
+      </div>
+    </main>
+  </body>
+  <script>
+    function goToLotte1() {
+      document.body.classList.add("slide-out-right");
+      setTimeout(function () {
+        window.location.href = "/lotte1";
+      }, 1000);
+    }
+
+    function goToLotte2() {
+      document.body.classList.add("slide-out-left");
+      setTimeout(function () {
+        window.location.href = "/lotte2";
+      }, 1000);
+    }
+  </script>
+</html>

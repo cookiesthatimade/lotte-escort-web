@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="kr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+    />
+    <!--<meta http-equiv="refresh" content="10; url=/" /> -->
+    <title>롯데아울렛 광주월드컵점</title>
+    <link rel="icon" href="static/img/favicon.ico" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/swiper@8/swiper-bundle.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="static/css/lotte1.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/annyang/2.6.1/annyang.min.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js"></script>
+  </head>
+
+  <body>
+    <nav>
+      <div class="left">
+        <div class="logo">
+          <a href="lotte"><img src="/static/img/lotte_logo.svg" alt="" /></a>
+        </div>
+      </div>
+
+      <div class="right">
+        <button class="home-btn" id="home-btn">
+          <i class="fas fa-home"></i>
+        </button>
+      </div>
+    </nav>
+    <main>
+      <div class="header-container">
+        <div class="floor-selection">
+          <button id="1f-btn">
+            <span class="floor-label">1F</span>
+            <span class="floor-details"
+              >해외명품 | 구두 | 핸드백 | 여성패션 | 영캐주얼 | 란제리 |
+              스포츠</span
+            >
+          </button>
+          <button id="2f-btn">
+            <span class="floor-label">2F</span>
+            <span class="floor-details"
+              >남성패션 | 스포츠 | 아웃도어 | 골프 | 아동 | 식당가 | 카페</span
+            >
+          </button>
+        </div>
+        <div class="header-content">
+          <div id="topbar"></div>
+          <div id="store-area"></div>
+        </div>
+      </div>
+
+      <div class="img-modal" style="display: none">
+        <div class="modal-content">
+          <img id="modal-image" src="" alt="Store Image" />
+        </div>
+      </div>
+    </main>
+
+    <script src="static/js/lotte1.js"></script>
+  </body>
+</html>
