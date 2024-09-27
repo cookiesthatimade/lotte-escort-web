@@ -17,7 +17,7 @@ This project is built with :
 </br>
 
 ## Installation 📦
-### To install subway_shoppingmall_web, follow these steps:
+### To install lotteoutlets_shoppingmall_web, follow these steps:
 </br>
 
 ## 1. Clone this repository:
