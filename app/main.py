@@ -8,25 +8,16 @@ from logging.config import dictConfig
 import logging.handlers  # 필요한 모듈을 가져옵니다.
 import threading  # threading 모듈 추가
 import requests
+import pandas as pd
 
 # my_settings.py 파일에서 설정 불러오기
-from my_settings import DB_SETTINGS, SENSOR_DB1_SETTINGS, SENSOR_DB2_SETTINGS, API_KEY
+from my_settings import API_KEY
 
 
 app = Flask(__name__)
 
 # DB 연결에 대한 락
 connection_lock = threading.Lock()
-
-
-# DB 연결 설정
-def get_connection():
-    connection = pymysql.connect(host=DB_SETTINGS['host'],
-                                 user=DB_SETTINGS['user'],
-                                 password=DB_SETTINGS['password'],
-                                 db=DB_SETTINGS['db'],
-                                 cursorclass=pymysql.cursors.DictCursor)
-    return connection
 
 
 @app.route('/lotte', methods=['GET', 'POST'])
@@ -50,68 +41,28 @@ def news2():
 
 
 ############################################################################################
-###### SSE#####
+###### 음성인식 #####
 ############################################################################################
 
 
-@app.route('/sensing_data')
-def sensing_data():
-    def respond_to_client():
+# CSV 파일 경로
+file_path = '/Users/factorysunny/Downloads/lotte_escort_with_pron.csv'
 
-        while True:
-            connection1 = pymysql.connect(host=SENSOR_DB1_SETTINGS['host'],
-                                          user=SENSOR_DB1_SETTINGS['user'],
-                                          password=SENSOR_DB1_SETTINGS['password'],
-                                          db=SENSOR_DB1_SETTINGS['db'],
-                                          cursorclass=pymysql.cursors.DictCursor)
-
-            with connection1.cursor() as cursor:
-                # 쿼리 실행하여 가장 최신의 데이터 하나 가져오기
-                cursor.execute(
-                    "SELECT * FROM `sensor`.`env_data` ORDER BY `date` DESC LIMIT 1;")
-                latest_data = cursor.fetchone()  # 최신 데이터 가져오기
-
-                # UTC로부터 대한민국 시간대로 변환
-                korea_time = latest_data['date']
-
-                # 데이터베이스에서 가져온 컬럼명을 기준으로 Dictionary 생성
-                _data = json.dumps({'Date': korea_time.strftime("%Y-%m-%d %H:%M:%S"), 'temperature': latest_data['temperature'], 'humidity': latest_data['humidity'],
-                                    'co2': latest_data['co2'], 'lux': latest_data['lux'], 'voc': latest_data['voc']})
-
-                yield f"id: 1\ndata: {_data}\nevent: online\n\n"
-                time.sleep(5)  # 5초로 설정
-
-    return Response(respond_to_client(), mimetype='text/event-stream')
+# CSV 데이터 읽기
+df = pd.read_csv(file_path, encoding="cp949")
 
 
-@app.route('/sensing_data2')
-def sensing_data2():
-    def respond_to_client():
+@app.route('/check_location')
+def check_location():
+    location_name = request.args.get('name')
+    if location_name in df['pron'].values:
+        row = df[df['pron'] == location_name].iloc[0]
+        message = f"{row['location']}으로 안내합니다."
+    else:
+        message = "해당 장소를 찾을 수 없습니다."
 
-        while True:
-            connection2 = pymysql.connect(host=SENSOR_DB2_SETTINGS['host'],
-                                          user=SENSOR_DB2_SETTINGS['user'],
-                                          password=SENSOR_DB2_SETTINGS['password'],
-                                          db=SENSOR_DB2_SETTINGS['db'],
-                                          cursorclass=pymysql.cursors.DictCursor)
-
-            with connection2.cursor() as cursor:
-                # 쿼리 실행하여 가장 최신의 데이터 하나 가져오기
-                cursor.execute(
-                    "SELECT * FROM `sensor2`.`env_data` ORDER BY `date` DESC LIMIT 1;")
-                latest_data = cursor.fetchone()  # 최신 데이터 가져오기
-
-                # UTC로부터 대한민국 시간대로 변환
-                korea_time = latest_data['date']
-
-                # 데이터베이스에서 가져온 컬럼명을 기준으로 Dictionary 생성
-                _data = json.dumps({'Date': korea_time.strftime("%Y-%m-%d %H:%M:%S"), 'temperature': latest_data['temperature'], 'humidity': latest_data['humidity'],
-                                    'co2': latest_data['co2'], 'lux': latest_data['lux'], 'voc': latest_data['voc']})
-
-                yield f"id: 1\ndata: {_data}\nevent: online\n\n"
-                time.sleep(5)  # 5초로 설정
-
-    return Response(respond_to_client(), mimetype='text/event-stream')
+    response_data = json.dumps({"message": message}, ensure_ascii=False)
+    return Response(response_data, mimetype='application/json')
 
 
 @app.route('/transcribe', methods=['POST'])

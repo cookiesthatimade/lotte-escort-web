@@ -6,7 +6,6 @@
       name="viewport"
       content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
     />
-    <!--<meta http-equiv="refresh" content="10; url=/" /> -->
     <title>롯데아울렛 광주월드컵점</title>
     <link rel="icon" href="static/img/favicon.ico" />
     <link
@@ -25,13 +24,14 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
   </head>
 
   <body>
     <nav>
       <div class="left">
         <div class="logo">
-          <a href="lotte"><img src="/static/img/lotte_logo.svg" alt="" /></a>
+          <a href="lotte"><img src="/static/img/lottelogo.png" alt="" /></a>
         </div>
       </div>
       <div class="right">
@@ -78,20 +78,11 @@
         </div>
       </div>
 
-      <div class="opacity-overlay"></div>
-
-      <div class="modal-wrapper">
-        <div class="modal">
-          <div class="head">
-            <a class="btn-close trigger" href="#"
-              ><i class="fa fa-times" aria-hidden="true"></i
-            ></a>
-          </div>
-          <div class="content">
-            <div class="exit-number">
-              <img id="modalImage" src="" alt="Image" />
-            </div>
-          </div>
+      <div class="store-modal">
+        <div class="store-modal-content">
+          <div class="button-container"></div>
+          <img src="" id="store-modal-image" />
+          <div id="markers-container"></div>
         </div>
       </div>
     </main>
