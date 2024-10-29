@@ -1,3 +1,40 @@
+document.addEventListener("DOMContentLoaded", function () {
+  var doc = document.documentElement;
+  var FullPage = document.getElementById("logo-image");
+
+  // 전체화면 설정
+  function openFullScreenMode() {
+    if (doc.requestFullscreen) doc.requestFullscreen();
+    else if (doc.webkitRequestFullscreen) doc.webkitRequestFullscreen();
+    else if (doc.mozRequestFullScreen) doc.mozRequestFullScreen();
+    else if (doc.msRequestFullscreen) doc.msRequestFullscreen();
+    $(".fullscreen").hide();
+    $(".close-fullscreen").show();
+  }
+
+  function closeFullScreenMode() {
+    if (document.exitFullscreen) document.exitFullscreen();
+    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+    else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
+    else if (document.msExitFullscreen) document.msExitFullscreen();
+    $(".fullscreen").show();
+    $(".close-fullscreen").hide();
+  }
+
+  FullPage.addEventListener("click", function () {
+    if (
+      !document.fullscreenElement &&
+      !document.webkitFullscreenElement &&
+      !document.mozFullScreenElement &&
+      !document.msFullscreenElement
+    ) {
+      openFullScreenMode();
+    } else {
+      closeFullScreenMode();
+    }
+  });
+});
+
 document.getElementById("home-btn").addEventListener("click", function () {
   window.location.href = "lotte";
 });
@@ -156,20 +193,91 @@ document.addEventListener("DOMContentLoaded", function () {
         // 마커를 modalImage 위에 추가
         imgModal.appendChild(marker);
 
-        let utteranceText;
-
-        if (store_floor === "2F") {
-          utteranceText = `${storeName} 매장은 2층에 있습니다.`;
-        } else {
-          utteranceText = `${storeName} 매장으로 안내합니다.`;
+        let audioFilePath;
+        switch (storeName) {
+          case "대화":
+            audioFilePath = "/static/audio/robot2.wav";
+            subtitleText =
+              "네! 고객님과 대화가 가능합니다. 어떤 것이 궁금하신가요?";
+            break;
+          case "어떤":
+            audioFilePath = "/static/audio/robot3.wav";
+            subtitleText =
+              "저는 고객님들께 매장 안내를 돕는 일을 합니다. 무엇을 도와드릴까요? 말씀해주세요.";
+            break;
+          case "bakery":
+            audioFilePath = "/static/audio/robot4.wav";
+            subtitleText =
+              "MaWang Pie is the most popular at this bakery. Try it.";
+            break;
+          case "톡톡히":
+            audioFilePath = "/static/audio/robot5.wav";
+            subtitleText = "고객님, 찾고 계시는 마왕파이가 여기 있습니다.";
+            break;
+          case "느낌입니다":
+            audioFilePath = "/static/audio/robot6.wav";
+            subtitleText = "고객님 더 필요한 것은 없나요?";
+            break;
+          case "고마워요":
+            audioFilePath = "/static/audio/robot7.wav";
+            subtitleText =
+              "그럼 좋은하루 되세요, 고객님. 저는 다른 곳으로 먼저 이동하겠습니다.";
+            break;
+          default:
+            audioFilePath = null;
         }
 
-        const utterance = new SpeechSynthesisUtterance(utteranceText);
-        speechSynthesis.speak(utterance);
+        if (audioFilePath) {
+          const audio = new Audio(audioFilePath);
+          audio.play();
+          console.log(
+            `매장명: ${storeName}, 층수: ${store_floor}, x_loc: ${store_x}, y_loc: ${store_y}`
+          );
 
-        console.log(
-          `매장명: ${storeName}, 층수: ${store_floor}, x_loc: ${store_x}, y_loc: ${store_y}`
-        );
+          imgModal.style.display = "none";
+
+          const overlayElement = document.createElement("div");
+          overlayElement.style.position = "fixed";
+          overlayElement.style.top = "0";
+          overlayElement.style.left = "0";
+          overlayElement.style.width = "100%";
+          overlayElement.style.height = "100%";
+          overlayElement.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+          overlayElement.style.zIndex = "999";
+
+          const subtitleElement = document.createElement("div");
+          subtitleElement.classList.add("subtitle");
+          subtitleElement.style.position = "absolute";
+          subtitleElement.style.width = "1000px";
+          subtitleElement.style.bottom = "30%";
+          subtitleElement.style.left = "50%";
+          subtitleElement.style.transform = "translateX(-50%)";
+          subtitleElement.style.padding = "10px";
+          subtitleElement.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
+          subtitleElement.style.color = "#fff";
+          subtitleElement.style.fontSize = "36px";
+          subtitleElement.style.zIndex = "1000";
+          subtitleElement.style.textAlign = "center";
+          subtitleElement.innerText = subtitleText;
+
+          document.body.appendChild(overlayElement);
+          document.body.appendChild(subtitleElement);
+
+          setTimeout(() => {
+            subtitleElement.remove();
+            overlayElement.remove();
+          }, 8000);
+        } else {
+          let utteranceText;
+          if (store_floor === "2F") {
+            utteranceText = `${storeName} 매장은 2층에 있습니다.`;
+          } else {
+            utteranceText = `${storeName} 매장으로 안내합니다.`;
+          }
+
+          const utterance = new SpeechSynthesisUtterance(utteranceText);
+          speechSynthesis.speak(utterance);
+        }
 
         setTimeout(() => {
           imgModal.style.display = "none";
@@ -295,7 +403,7 @@ function playWelcomeVoice() {
     return;
   }
 
-  var welcomeAudio = new Audio("/static/audio/welcome.wav");
+  var welcomeAudio = new Audio("/static/audio/robot1.wav");
   welcomeAudio.play();
 }
 

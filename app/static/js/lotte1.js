@@ -1,3 +1,40 @@
+document.addEventListener("DOMContentLoaded", function () {
+  var doc = document.documentElement;
+  var FullPage = document.getElementById("logo-image");
+
+  // 전체화면 설정
+  function openFullScreenMode() {
+    if (doc.requestFullscreen) doc.requestFullscreen();
+    else if (doc.webkitRequestFullscreen) doc.webkitRequestFullscreen();
+    else if (doc.mozRequestFullScreen) doc.mozRequestFullScreen();
+    else if (doc.msRequestFullscreen) doc.msRequestFullscreen();
+    $(".fullscreen").hide();
+    $(".close-fullscreen").show();
+  }
+
+  function closeFullScreenMode() {
+    if (document.exitFullscreen) document.exitFullscreen();
+    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+    else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
+    else if (document.msExitFullscreen) document.msExitFullscreen();
+    $(".fullscreen").show();
+    $(".close-fullscreen").hide();
+  }
+
+  FullPage.addEventListener("click", function () {
+    if (
+      !document.fullscreenElement &&
+      !document.webkitFullscreenElement &&
+      !document.mozFullScreenElement &&
+      !document.msFullscreenElement
+    ) {
+      openFullScreenMode();
+    } else {
+      closeFullScreenMode();
+    }
+  });
+});
+
 document.getElementById("home-btn").addEventListener("click", function () {
   window.location.href = "lotte";
 });
@@ -96,22 +133,30 @@ document.addEventListener("DOMContentLoaded", function () {
     storeArea.innerHTML = "";
 
     const uniqueSubCategories = new Set();
-
     const subCategoryStoreMap = {};
 
     stores.forEach((storeData) => {
       const subCategory = storeData["하위카테고리"];
       const store = storeData["매장명"];
+      const storeFloor = storeData["층"];
+      const store_x = storeData["x_loc"];
+      const store_y = storeData["y_loc"];
+      const click_num = storeData["click_num"];
 
       if (!uniqueSubCategories.has(subCategory)) {
         uniqueSubCategories.add(subCategory);
         subCategoryStoreMap[subCategory] = [];
       }
 
-      subCategoryStoreMap[subCategory].push(store);
+      subCategoryStoreMap[subCategory].push({
+        storeName: store,
+        storeFloor: storeFloor,
+        store_x: store_x,
+        store_y: store_y,
+        click_num: click_num,
+      });
     });
 
-    // 중복 제거된 하위카테고리별로 매장을 표시
     uniqueSubCategories.forEach((subCategory) => {
       const subCategoryHeader = document.createElement("h3");
       subCategoryHeader.textContent = subCategory;
@@ -125,32 +170,147 @@ document.addEventListener("DOMContentLoaded", function () {
       storeListDiv.style.flexWrap = "wrap";
       storeListDiv.style.width = "900px";
 
-      // 해당 하위카테고리에 속한 매장들을 버튼으로 표시
-      subCategoryStoreMap[subCategory].forEach((store) => {
+      subCategoryStoreMap[subCategory].forEach((storeData) => {
         const storeButton = document.createElement("button");
-        storeButton.textContent = store;
+        const cancelButton = document.querySelector(".img-modal .cancel-btn");
+        const GuideButton = document.querySelector(
+          ".img-modal .start-guide-btn"
+        );
+        const moveModal = document.querySelector(".movemodal");
+        const moveModalImage = document.getElementById("move-modal-image");
+
+        storeButton.textContent = storeData.storeName;
         storeButton.classList.add("store-button");
         storeButton.style.marginRight = "10px";
         storeButton.style.marginBottom = "10px";
 
-        if (store === "모바일상품권 바코드 교환") {
-          storeButton.style.fontSize = "14px";
+        if (
+          storeData.storeName === "모바일상품권 바코드 교환" ||
+          storeData.storeName === "내셔널지오그래픽키즈" ||
+          storeData.storeName === "코데즈컴바인 이너웨어"
+        ) {
+          storeButton.style.fontSize = "13px";
         } else {
           storeButton.style.fontSize = "16px";
         }
 
         storeButton.addEventListener("click", function () {
-          modalImage.src = "/static/img/store_loc/" + store + ".png";
+          if (storeData.storeFloor === "2F") {
+            modalImage.src = "/static/img/lotte_map2.png";
+          } else {
+            modalImage.src = "/static/img/lotte_map1.png";
+          }
           imgModal.style.display = "block";
 
-          const utterance = new SpeechSynthesisUtterance(
-            `${store} 매장으로 안내합니다.`
-          );
+          const marker = document.createElement("div");
+          const additionalMarker = document.createElement("div");
+
+          marker.classList.add("store-marker");
+          marker.style.position = "absolute";
+          marker.style.width = "30px";
+          marker.style.height = "30px";
+          marker.style.backgroundImage = "url(/static/img/marker.png)";
+          marker.style.backgroundSize = "contain";
+          marker.style.backgroundRepeat = "no-repeat";
+          marker.style.left = `${storeData.store_x}px`;
+          marker.style.top = `${storeData.store_y}px`;
+          marker.style.transform = "translate(-50%, -100%)";
+          marker.style.pointerEvents = "none";
+
+          imgModal.appendChild(marker);
+
+          if (storeData.storeName === "화장실") {
+            additionalMarker.classList.add("store-marker");
+            additionalMarker.style.position = "absolute";
+            additionalMarker.style.width = "30px";
+            additionalMarker.style.height = "30px";
+            additionalMarker.style.backgroundImage =
+              "url(/static/img/marker.png)";
+            additionalMarker.style.backgroundSize = "contain";
+            additionalMarker.style.backgroundRepeat = "no-repeat";
+            additionalMarker.style.left = "880px";
+            additionalMarker.style.top = "122px";
+            additionalMarker.style.transform = "translate(-50%, -100%)";
+            additionalMarker.style.pointerEvents = "none";
+
+            imgModal.appendChild(additionalMarker);
+          }
+
+          let utterance;
+
+          if (storeData.storeName === "화장실") {
+            utterance = new SpeechSynthesisUtterance(
+              `화장실은 이 위치에 있습니다. 안내를 시작할까요?`
+            );
+          } else {
+            utterance = new SpeechSynthesisUtterance(
+              `${storeData.storeName} 매장은 이 위치에 있습니다. 안내를 시작할까요?`
+            );
+          }
+
+          if (storeData.storeFloor === "2F") {
+            utterance.text = `${storeData.storeName} 매장은 2층에 있습니다.`;
+          }
           speechSynthesis.speak(utterance);
 
-          setTimeout(() => {
+          let previousClickNum = null;
+
+          function updateClickNumInDB(clickNum) {
+            if (previousClickNum === clickNum) {
+              return;
+            }
+
+            previousClickNum = clickNum;
+
+            fetch("/update_click_num", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ click_num: clickNum }),
+            })
+              .then((response) => response.json())
+              .then((data) => console.log("DB 업데이트 성공:", data))
+              .catch((error) => console.error("DB 업데이트 실패:", error));
+          }
+
+          GuideButton.addEventListener("click", function () {
             imgModal.style.display = "none";
-          }, 10000);
+            marker.remove();
+            additionalMarker.remove();
+
+            const clickNum = storeData.click_num;
+
+            updateClickNumInDB(clickNum);
+
+            moveModalImage.src = "/static/img/movemodal.png";
+            moveModal.style.display = "block";
+
+            setTimeout(function () {
+              moveModal.style.display = "none";
+
+              let completionMessage;
+              speechSynthesis.cancel();
+
+              if (storeData.storeFloor === "1F") {
+                completionMessage = new SpeechSynthesisUtterance(
+                  "이동이 완료되었습니다."
+                );
+                speechSynthesis.speak(completionMessage);
+              } else if (storeData.storeFloor === "2F") {
+                completionMessage = new SpeechSynthesisUtterance(
+                  "에스컬레이터를 타고 2층으로 올라가주세요."
+                );
+                speechSynthesis.speak(completionMessage);
+              }
+            }, 10000);
+          });
+
+          cancelButton.addEventListener("click", function () {
+            imgModal.style.display = "none";
+            marker.remove();
+            additionalMarker.remove();
+          });
         });
 
         storeListDiv.appendChild(storeButton);

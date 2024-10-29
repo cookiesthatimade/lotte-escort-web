@@ -25,18 +25,20 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+
+
   </head>
 
   <body>
     <nav>
       <div class="left">
-        <div class="logo">
-          <a href="lotte"><img src="/static/img/lottelogo.png" alt="" /></a>
+        <div class="logo" id="logo-image">
+          <img src="/static/img/lottelogo.png" alt="" /></a>
         </div>
       </div>
       <div class="right">
         <button class="home-btn" id="home-btn">
-          <i class="fas fa-home"></i>
+            <i class="fas fa-home"></i>
         </button>
       </div>
     </nav>
@@ -62,7 +64,7 @@
 
         <div class="answer">음성인식으로 매장 안내를 도와드립니다.</div>
         <div class="query">
-          예시 : 캉골, 나이키, 뉴발란스 (매장명을 말씀해주세요.)
+          예시 : 나이키, 뉴발란스, 미샤 (매장명을 말씀해주세요.)
         </div>
       </div>
 
@@ -74,17 +76,18 @@
         <div class="modal-content">
           <span class="close-btn">&times;</span>
           <div class="button-container"></div>
-          <img src="" id="modal-image" />
+            <img src="" id="modal-image" />
         </div>
       </div>
 
       <div class="store-modal">
         <div class="store-modal-content">
           <div class="button-container"></div>
-          <img src="" id="store-modal-image" />
-          <div id="markers-container"></div>
+            <img src="" id="store-modal-image" />
+            <div id="markers-container"></div>
         </div>
       </div>
+
     </main>
 
     <script src="static/js/lotte2.js"></script>

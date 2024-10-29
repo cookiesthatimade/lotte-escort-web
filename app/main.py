@@ -9,6 +9,8 @@ import logging.handlers  # 필요한 모듈을 가져옵니다.
 import threading  # threading 모듈 추가
 import requests
 import pandas as pd
+import pymysql
+import csv
 
 # my_settings.py 파일에서 설정 불러오기
 from my_settings import API_KEY
@@ -87,6 +89,34 @@ def transcribe():
 
     # 응답 반환
     return jsonify(response.json())
+
+
+lotte_db = {
+    'host': '43.203.56.192',
+    'user': 'root',
+    'password': '1111',
+    'db': 'lotte_outlet',
+
+    'cursorclass': pymysql.cursors.DictCursor
+}
+
+
+@app.route('/update_click_num', methods=['POST'])
+def update_click_num():
+    data = request.get_json()
+    click_num = int(data['click_num'])
+    try:
+        connection = pymysql.connect(**lotte_db)
+        with connection.cursor() as cursor:
+            # click_num 값을 INSERT로 추가
+            sql = "INSERT INTO lotte_monitor (click_num) VALUES (%s)"
+            cursor.execute(sql, (click_num,))
+        connection.commit()
+        return jsonify({'status': 'success'})
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)})
+    finally:
+        connection.close()
 
 
 if __name__ == '__main__':
