@@ -47,26 +47,6 @@ def news2():
 ############################################################################################
 
 
-# CSV 파일 경로
-file_path = '/Users/factorysunny/Downloads/lotte_escort_with_pron.csv'
-
-# CSV 데이터 읽기
-df = pd.read_csv(file_path, encoding="cp949")
-
-
-@app.route('/check_location')
-def check_location():
-    location_name = request.args.get('name')
-    if location_name in df['pron'].values:
-        row = df[df['pron'] == location_name].iloc[0]
-        message = f"{row['location']}으로 안내합니다."
-    else:
-        message = "해당 장소를 찾을 수 없습니다."
-
-    response_data = json.dumps({"message": message}, ensure_ascii=False)
-    return Response(response_data, mimetype='application/json')
-
-
 @app.route('/transcribe', methods=['POST'])
 def transcribe():
     data = request.json
