@@ -88,11 +88,42 @@ def update_click_num():
     try:
         connection = pymysql.connect(**lotte_db)
         with connection.cursor() as cursor:
-            # click_num 값을 INSERT로 추가
-            sql = "INSERT INTO lotte_monitor (click_num) VALUES (%s)"
-            cursor.execute(sql, (click_num,))
+            sql_insert = "INSERT INTO lotte_monitor (click_num) VALUES (%s)"
+            cursor.execute(sql_insert, (click_num,))
+
         connection.commit()
-        return jsonify({'status': 'success'})
+
+        return jsonify({'status': 'success', 'click_num': click_num})
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)})
+    finally:
+        connection.close()
+
+
+@app.route('/get_going_status', methods=['GET'])
+def get_going_status():
+    try:
+        connection = pymysql.connect(**lotte_db)
+        with connection.cursor() as cursor:
+            sql_going = "SELECT going FROM lotte_going ORDER BY id DESC LIMIT 1"
+            cursor.execute(sql_going)
+            going_result = cursor.fetchone()
+
+            if going_result:
+                going = going_result['going']
+            else:
+                going = None
+
+            sql_direction = "SELECT direction FROM lotte_direction ORDER BY id DESC LIMIT 1"
+            cursor.execute(sql_direction)
+            direction_result = cursor.fetchone()
+
+            if direction_result:
+                direction = direction_result['direction']
+            else:
+                direction = None
+
+        return jsonify({'going': going, 'direction': direction})
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)})
     finally:

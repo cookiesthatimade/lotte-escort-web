@@ -81,13 +81,27 @@ document.addEventListener("DOMContentLoaded", function () {
       const storeName = currentLine[3].trim();
       const store_x = parseFloat(currentLine[4].trim());
       const store_y = parseFloat(currentLine[5].trim());
+      const click_num = parseInt(currentLine[6].trim());
+      const upment = currentLine[7].trim();
+      const downment = currentLine[8].trim();
 
-      storeNamesForLotte2.push({ store_floor, storeName, store_x, store_y });
+      storeNamesForLotte2.push({
+        store_floor,
+        storeName,
+        store_x,
+        store_y,
+        click_num,
+        upment,
+        downment,
+      });
 
       obj["층"] = store_floor;
       obj["매장명"] = storeName;
       obj["x_loc"] = store_x;
       obj["y_loc"] = store_y;
+      obj["click_num"] = click_num;
+      obj["up_ment"] = upment;
+      obj["down_ment"] = downment;
 
       result.push(obj);
     }
@@ -142,6 +156,8 @@ document.addEventListener("DOMContentLoaded", function () {
       const store_x = storeData["x_loc"];
       const store_y = storeData["y_loc"];
       const click_num = storeData["click_num"];
+      const upment = storeData["up_ment"];
+      const downment = storeData["down_ment"];
 
       if (!uniqueSubCategories.has(subCategory)) {
         uniqueSubCategories.add(subCategory);
@@ -154,6 +170,8 @@ document.addEventListener("DOMContentLoaded", function () {
         store_x: store_x,
         store_y: store_y,
         click_num: click_num,
+        upment: upment,
+        downment: downment,
       });
     });
 
@@ -254,6 +272,7 @@ document.addEventListener("DOMContentLoaded", function () {
           speechSynthesis.speak(utterance);
 
           let previousClickNum = null;
+          let lastGoingValue = null;
 
           function updateClickNumInDB(clickNum) {
             if (previousClickNum === clickNum) {
@@ -270,10 +289,71 @@ document.addEventListener("DOMContentLoaded", function () {
               body: JSON.stringify({ click_num: clickNum }),
             })
               .then((response) => response.json())
-              .then((data) => console.log("DB 업데이트 성공:", data))
-              .catch((error) => console.error("DB 업데이트 실패:", error));
+              .then((data) => {
+                console.log("DB 업데이트 성공:", data);
+                checkGoingStatus();
+              })
+              .catch((error) => {
+                console.error("데이터 가져오기 실패:", error);
+              });
           }
 
+          function checkGoingStatus() {
+            const interval = setInterval(() => {
+              fetch("/get_going_status", {
+                method: "GET",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              })
+                .then((response) => response.json())
+                .then((data) => {
+                  console.log(
+                    "현재 going 값:",
+                    data.going,
+                    "direction:",
+                    data.direction
+                  );
+
+                  let completionMessage;
+                  speechSynthesis.cancel();
+
+                  if (data.going === 0) {
+                    moveModal.style.display = "none";
+
+                    if (lastGoingValue !== 0) {
+                      lastGoingValue = data.going;
+
+                      if (data.direction === 1 && storeData.upment) {
+                        completionMessage = new SpeechSynthesisUtterance(
+                          storeData.upment
+                        );
+                        console.log("멘트:", storeData.upment);
+                      } else if (data.direction === 0 && storeData.downment) {
+                        completionMessage = new SpeechSynthesisUtterance(
+                          storeData.downment
+                        );
+                        console.log("멘트:", storeData.downment);
+                      }
+
+                      if (completionMessage) {
+                        speechSynthesis.speak(completionMessage);
+                      } else {
+                        console.error("음성 메시지가 설정되지 않았습니다.");
+                      }
+
+                      clearInterval(interval);
+                    }
+                  } else {
+                    lastGoingValue = data.going;
+                  }
+                })
+                .catch((error) => {
+                  console.error("데이터 가져오기 실패:", error);
+                  clearInterval(interval);
+                });
+            }, 1000);
+          }
           GuideButton.addEventListener("click", function () {
             imgModal.style.display = "none";
             marker.remove();
@@ -285,25 +365,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
             moveModalImage.src = "/static/img/movemodal.png";
             moveModal.style.display = "block";
-
-            setTimeout(function () {
-              moveModal.style.display = "none";
-
-              let completionMessage;
-              speechSynthesis.cancel();
-
-              if (storeData.storeFloor === "1F") {
-                completionMessage = new SpeechSynthesisUtterance(
-                  "이동이 완료되었습니다."
-                );
-                speechSynthesis.speak(completionMessage);
-              } else if (storeData.storeFloor === "2F") {
-                completionMessage = new SpeechSynthesisUtterance(
-                  "에스컬레이터를 타고 2층으로 올라가주세요."
-                );
-                speechSynthesis.speak(completionMessage);
-              }
-            }, 10000);
           });
 
           cancelButton.addEventListener("click", function () {

@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>롯데아울렛 광주월드컵점</title>
     <link rel="icon" href="static/img/favicon.ico" />
+    <link
+      rel="manifest"
+      href="{{ url_for('static', filename='manifest.json') }}"
+    />
     <link rel="stylesheet" href="static/css/lotte.css" />
     <link
       rel="stylesheet"
@@ -20,7 +24,7 @@
         src="/static/img/lottelogo_b.png"
         alt="롯데 아울렛 로고"
         class="logo"
-        id = "logo-image"
+        id="logo-image"
       />
     </nav>
     <main>
@@ -45,61 +49,69 @@
   </body>
   <script>
     function goToLotte1() {
-        document.body.classList.add('slide-out-right');
-        setTimeout(function () {
-        window.location.href = "/lotte1"; 
-        }, 1000);
+      document.body.classList.add("slide-out-right");
+      setTimeout(function () {
+        window.location.href = "/lotte1";
+      }, 1000);
     }
 
     function goToLotte2() {
-        document.body.classList.add('slide-out-left');
-        setTimeout(function () {
+      document.body.classList.add("slide-out-left");
+      setTimeout(function () {
         window.location.href = "/lotte2";
-        }, 1000);
+      }, 1000);
     }
-    
+
     document.addEventListener("DOMContentLoaded", function () {
-    var doc = document.documentElement;
-    var FullPage = document.getElementById("logo-image");
+      var doc = document.documentElement;
+      var FullPage = document.getElementById("logo-image");
 
-    // 전체화면 설정
-    function openFullScreenMode() {
-        if (doc.requestFullscreen)
-            doc.requestFullscreen();
-        else if (doc.webkitRequestFullscreen)
-            doc.webkitRequestFullscreen();
-        else if (doc.mozRequestFullScreen) 
-            doc.mozRequestFullScreen();
-        else if (doc.msRequestFullscreen) 
-            doc.msRequestFullscreen();
-        $('.fullscreen').hide();
-        $('.close-fullscreen').show();
-    }
+      // 전체화면 설정
+      function openFullScreenMode() {
+        if (doc.requestFullscreen) doc.requestFullscreen();
+        else if (doc.webkitRequestFullscreen) doc.webkitRequestFullscreen();
+        else if (doc.mozRequestFullScreen) doc.mozRequestFullScreen();
+        else if (doc.msRequestFullscreen) doc.msRequestFullscreen();
+        $(".fullscreen").hide();
+        $(".close-fullscreen").show();
+      }
 
-    function closeFullScreenMode() {
-        if (document.exitFullscreen)
-            document.exitFullscreen();
-        else if (document.webkitExitFullscreen)
-            document.webkitExitFullscreen();
-        else if (document.mozCancelFullScreen) 
-            document.mozCancelFullScreen();
-        else if (document.msExitFullscreen) 
-            document.msExitFullscreen();
-        $('.fullscreen').show();
-        $('.close-fullscreen').hide();
-    }
+      function closeFullScreenMode() {
+        if (document.exitFullscreen) document.exitFullscreen();
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+        else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
+        else if (document.msExitFullscreen) document.msExitFullscreen();
+        $(".fullscreen").show();
+        $(".close-fullscreen").hide();
+      }
 
-    FullPage.addEventListener("click", function () {
-        if (!document.fullscreenElement && 
-            !document.webkitFullscreenElement && 
-            !document.mozFullScreenElement && 
-            !document.msFullscreenElement) { 
-            openFullScreenMode();
+      FullPage.addEventListener("click", function () {
+        if (
+          !document.fullscreenElement &&
+          !document.webkitFullscreenElement &&
+          !document.mozFullScreenElement &&
+          !document.msFullscreenElement
+        ) {
+          openFullScreenMode();
         } else {
-            closeFullScreenMode();
+          closeFullScreenMode();
         }
+      });
     });
-});
-
+  </script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker
+        .register("/static/service-worker.js")
+        .then((registration) => {
+          console.log(
+            "Service Worker registered with scope:",
+            registration.scope
+          );
+        })
+        .catch((error) => {
+          console.log("Service Worker registration failed:", error);
+        });
+    }
   </script>
 </html>
