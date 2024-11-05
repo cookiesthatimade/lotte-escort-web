@@ -323,13 +323,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     if (lastGoingValue !== 0) {
                       lastGoingValue = data.going;
-
-                      if (data.direction === 1 && storeData.upment) {
+                      //direction == 0 (상행), direction == 1 (하행)
+                      if (data.direction === 0 && storeData.upment) {
                         completionMessage = new SpeechSynthesisUtterance(
                           storeData.upment
                         );
                         console.log("멘트:", storeData.upment);
-                      } else if (data.direction === 0 && storeData.downment) {
+                      } else if (data.direction === 1 && storeData.downment) {
                         completionMessage = new SpeechSynthesisUtterance(
                           storeData.downment
                         );
