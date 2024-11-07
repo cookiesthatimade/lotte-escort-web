@@ -2,13 +2,10 @@ from flask import Flask, Response, request, render_template, jsonify
 import pymysql
 import time
 import json
-from pytz import timezone
-import pytz
 from logging.config import dictConfig
 import logging.handlers  # 필요한 모듈을 가져옵니다.
 import threading  # threading 모듈 추가
 import requests
-import pandas as pd
 import pymysql
 import csv
 

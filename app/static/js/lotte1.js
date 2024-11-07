@@ -361,7 +361,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const clickNum = storeData.click_num;
 
-            updateClickNumInDB(clickNum);
+            setTimeout(function () {
+              updateClickNumInDB(clickNum);
+            }, 2000);
 
             moveModalImage.src = "/static/img/movemodal.png";
             moveModal.style.display = "block";
@@ -371,6 +373,16 @@ document.addEventListener("DOMContentLoaded", function () {
             imgModal.style.display = "none";
             marker.remove();
             additionalMarker.remove();
+
+            const clickNum = storeData.click_num;
+
+            previousClickNum = null;
+
+            if (previousClickNum === clickNum) {
+              return;
+            }
+
+            previousClickNum = clickNum;
           });
         });
 
