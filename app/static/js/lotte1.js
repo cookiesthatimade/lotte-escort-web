@@ -258,7 +258,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
           if (storeData.storeName === "화장실") {
             utterance = new SpeechSynthesisUtterance(
-              `화장실은 이 위치에 있습니다. 안내를 시작할까요?`
+              `화장실은 이 위치에 있습니다. 가까운 화장실로 안내를 시작할까요?`
             );
           } else {
             utterance = new SpeechSynthesisUtterance(
@@ -267,7 +267,7 @@ document.addEventListener("DOMContentLoaded", function () {
           }
 
           if (storeData.storeFloor === "2F") {
-            utterance.text = `${storeData.storeName} 매장은 2층에 있습니다.`;
+            utterance.text = `${storeData.storeName} 매장은 2층에 있습니다. 가까운 에스컬레이터로 안내를 시작할까요?`;
           }
           speechSynthesis.speak(utterance);
 
@@ -291,7 +291,10 @@ document.addEventListener("DOMContentLoaded", function () {
               .then((response) => response.json())
               .then((data) => {
                 console.log("DB 업데이트 성공:", data);
-                checkGoingStatus();
+
+                setTimeout(function () {
+                  checkGoingStatus();
+                }, 3000);
               })
               .catch((error) => {
                 console.error("데이터 가져오기 실패:", error);
@@ -361,9 +364,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const clickNum = storeData.click_num;
 
-            setTimeout(function () {
-              updateClickNumInDB(clickNum);
-            }, 2000);
+            updateClickNumInDB(clickNum);
 
             moveModalImage.src = "/static/img/movemodal.png";
             moveModal.style.display = "block";

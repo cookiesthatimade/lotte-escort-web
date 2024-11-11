@@ -226,7 +226,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (storeName === "화장실") {
           utterance = new SpeechSynthesisUtterance(
-            `화장실은 이 위치에 있습니다. 안내를 시작할까요?`
+            `화장실은 이 위치에 있습니다. 가까운 화장실로 안내를 시작할까요?`
           );
         } else {
           utterance = new SpeechSynthesisUtterance(
@@ -235,7 +235,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (store_floor === "2F") {
-          utterance.text = `${storeName} 매장은 2층에 있습니다.`;
+          utterance.text = `${storeName} 매장은 2층에 있습니다. 가까운 에스컬레이터로 안내를 시작할까요?`;
         }
 
         speechSynthesis.speak(utterance);
@@ -260,7 +260,10 @@ document.addEventListener("DOMContentLoaded", function () {
             .then((response) => response.json())
             .then((data) => {
               console.log("DB 업데이트 성공:", data);
-              checkGoingStatus();
+
+              setTimeout(function () {
+                checkGoingStatus();
+              }, 3000);
             })
             .catch((error) => {
               console.error("데이터 가져오기 실패:", error);
@@ -339,11 +342,15 @@ document.addEventListener("DOMContentLoaded", function () {
           marker.remove();
           additionalMarker.remove();
 
-          hideWaveContainer();
-          recognition.stop();
-          micIcon.classList.remove("m-active");
-          micButtonLoader.classList.remove("active");
-          recognitionActive = false;
+          const clickNum = storeData.click_num;
+
+          previousClickNum = null;
+
+          if (previousClickNum === clickNum) {
+            return;
+          }
+
+          previousClickNum = clickNum;
         });
 
         // let audioFilePath;
