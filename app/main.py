@@ -10,7 +10,7 @@ import pymysql
 import csv
 
 # my_settings.py 파일에서 설정 불러오기
-from my_settings import API_KEY
+from my_settings import API_KEY, DB_CONFIG
 
 
 app = Flask(__name__)
@@ -68,14 +68,8 @@ def transcribe():
     return jsonify(response.json())
 
 
-lotte_db = {
-    'host': '43.203.56.192',
-    'user': 'root',
-    'password': '1111',
-    'db': 'lotte_outlet',
-
-    'cursorclass': pymysql.cursors.DictCursor
-}
+# pymysql 연결 시 DB_CONFIG 사용
+connection = pymysql.connect(**DB_CONFIG)
 
 
 @app.route('/update_click_num', methods=['POST'])
